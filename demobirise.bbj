@@ -1,0 +1,40 @@
+dir$="D:\KundenTageMicrosite\publish\"
+
+
+open (1)dir$
+open (2)"tags.txt"
+read record (2,siz=100000) tags$
+close (2)
+
+tags! = tags$
+t! = java.util.Arrays.asList(tags!.split($0a$))
+
+
+
+while 1
+
+    read record (1,end=*break)f$
+    if f$(1,1)="." or pos(".html"=f$)=0 then continue
+    print "Cleaning "+f$+"..."
+
+    open (2)dir$+f$
+    read record (2,siz=10000000)html$
+    close (2)
+    
+    html! = html$
+    
+    it! = t!.iterator()
+    while it!.hasNext()
+        tag! = it!.next()
+        tag! = tag!.replace($0D$,"")
+        html! = html!.replaceAll(str(tag!),"")
+
+    wend
+    
+    open (2,mode="O_CREATE,O_TRUNC")dir$+f$
+    write (2)str(html!)
+    close (2)
+
+wend
+wait 1
+release
